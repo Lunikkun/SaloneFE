@@ -1,0 +1,55 @@
+<script setup lang="ts">
+import { loginPanelOpened, session } from '@/stores/globals';
+import { ref } from 'vue'
+
+let email = ref('')
+let pw = ref('')
+
+async function login(mail: string, password: string) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: mail, password }),
+  } //COSI VA
+
+  let result = await fetch('http://127.0.0.1:3000/login', {
+    mode: 'cors',
+    credentials : 'include',
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: mail, password }),
+    //COSI NON VA
+  })
+
+  let res = await JSON.parse(await result.text());
+  if(res.session !== null)
+    session.value = res;
+  else
+  session.value = undefined
+
+  console.log(res)
+}
+</script>
+<template>
+  <div v-if="loginPanelOpened" class="bg-white text-black z-999 absolute w-[200px] rounded-l-2xl">
+    <div
+      class="flex flex-col align-middle justify-center space-y-4 px-6 mt-5 py-6 font-fanwood box-content"
+    >
+      <div>
+        <input placeholder="martarossi@gmail.com" class="text-sm w-[100%]" v-model="email" />
+        <div class="border-[0.2px]"></div>
+      </div>
+      <div>
+        <input placeholder="Password..." type="password" class="text-sm w-[100%]" v-model="pw" />
+        <div class="border-[0.2px]"></div>
+      </div>
+      <a class="text-xs text-[#2b2b2b] text-center text-pretty">Password dimenticata? Clicca qui</a>
+      <button
+        @click="() => {login(email, pw);loginPanelOpened = false}"
+        class="border self-center text-white bg-black rounded-full py-2 w-[6em] text-sm"
+      >
+        Conferma
+      </button>
+    </div>
+  </div>
+</template>
