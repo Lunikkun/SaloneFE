@@ -35,6 +35,7 @@ async function logout() {
         @click="
           () => {
             console.log(session, registerPanelOpened)
+            loginPanelOpened = false
             registerPanelOpened = !registerPanelOpened
           }
         "
@@ -48,6 +49,7 @@ async function logout() {
         @click="
           () => {
             loginPanelOpened = !loginPanelOpened
+            registerPanelOpened = false
             console.log(session, loginPanelOpened)
           }
         "
