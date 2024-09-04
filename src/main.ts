@@ -1,5 +1,4 @@
 import VueCookies  from 'vue-cookies';
-import { inject } from 'vue'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
