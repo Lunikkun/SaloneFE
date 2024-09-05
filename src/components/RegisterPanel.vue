@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { registerPanelOpened } from '@/stores/globals'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const email = ref('')
 const pw = ref('')
@@ -8,7 +7,8 @@ const pw2 = ref('')
 const nome = ref('')
 const cognome = ref('')
 const gender = ref(false)
-watch(gender, ()=>{console.log(gender.value)})
+const errors = ref()
+
 async function register(
   email: string,
   nome: string,
@@ -17,16 +17,21 @@ async function register(
   pw2: string,
   gender: boolean
 ) {
-  console.log(gender);
+  let queryResult: ErrorRegistration = { success: true, error: { name: '', issues: [] } }
   if (pw === pw2) {
     let result = await fetch('http://127.0.0.1:3000/register', {
       mode: 'cors',
       credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, nome, cognome, password:pw, isMale:gender })
+      body: JSON.stringify({ email, nome, cognome, password: pw, isMale: gender })
     })
-    console.log(result)
+    //PUO CONTENERE ERRORE DI ZOD
+    const value: ErrorRegistration = JSON.parse(await result.text())
+    queryResult.success = value.success
+    queryResult.error = value.error
+    errors.value = queryResult.error.issues.map((issue) => issue.message)
+    console.log(queryResult)
   }
 }
 </script>
@@ -62,23 +67,24 @@ async function register(
         <div class="border-[0.2px]"></div>
       </div>
       <div class="flex flex-row justify-evenly text-sm w-[100%] font-fanwood text-[#252525]">
-        <input type="radio" v-model="gender" name="gender" v-bind:value="true"/>
+        <input type="radio" v-model="gender" name="gender" v-bind:value="true" />
         <p>Maschio</p>
-        <input type="radio" v-model="gender" name="gender" v-bind:value="false"/>
+        <input type="radio" v-model="gender" name="gender" v-bind:value="false" />
         <p>Femmina</p>
       </div>
       <button
         @click="
           () => {
-            registerPanelOpened = false
-            if (email !== '' && nome !== '' && pw !== '' && pw2 !== '')
+            if (email !== '' && nome !== '' && pw !== '' && pw2 !== '') {
               register(email, nome, cognome, pw, pw2, gender)
+            }
           }
         "
         class="border self-center text-white bg-black rounded-full py-2 w-[6em] text-sm"
       >
         Conferma
       </button>
+        <div v-for="err in errors" :key="err" class="text-sm text-red-500">{{ err }}</div>
     </div>
   </div>
 </template>
