@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { loginPanelOpened, session } from '@/stores/globals';
+import { loginPanelOpened, resetPasswordPanelOpened, session } from '@/stores/globals';
 import { ref } from 'vue'
 
 let email = ref('')
@@ -44,7 +44,7 @@ async function login(mail: string, password: string) {
         <input placeholder="Password..." type="password" class="text-sm w-[100%]" v-model="pw" />
         <div class="border-[0.2px]"></div>
       </div>
-      <a class="text-xs text-[#2b2b2b] text-center text-pretty" >Password dimenticata? Clicca qui</a>
+      <a class="text-xs text-[#2b2b2b] text-center text-pretty" @click="()=>{resetPasswordPanelOpened=true;loginPanelOpened=false}">Password dimenticata? Clicca qui</a>
       <button
         @click="() => {if(email !== '' && pw !== ''){login(email, pw)} loginPanelOpened=false}"
         class="border self-center text-white bg-black rounded-full py-2 w-[6em] text-sm"

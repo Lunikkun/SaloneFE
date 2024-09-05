@@ -9,6 +9,12 @@ const router = createRouter({
       name: 'home',
       component: ()=>import('../views/viewView.vue')
     },
+    {
+      path: '/:token',
+      name: 'homePasswordReset',
+      component: ()=>import('../components/ResetPanelApply.vue'),
+      
+    },
   ]
 })
 
