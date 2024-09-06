@@ -1,20 +1,36 @@
 <script setup lang="ts">
-import { resetToken } from '@/stores/globals';
+import { resetPasswordPanelApplyOpened, resetToken } from '@/stores/globals'
 import { ref } from 'vue'
 const pw = ref('')
 const pw2 = ref('')
-
-async function sendResetRequest(pw: string, pw2: string) {
-  if (pw == pw2) {
-    let result = await fetch('http://127.0.0.1:3000/reset-password-apply/'+resetToken.value, {
+const errors = ref([''])
+const success = ref('')
+async function sendResetRequest(pw: string, pw2: string): Promise<boolean> {
+  errors.value = []
+  if (pw === pw2) {
+    let result = await fetch('http://127.0.0.1:3000/reset-password-apply/' + resetToken.value, {
       mode: 'cors',
       credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password:pw })
+      body: JSON.stringify({ password: pw })
       //COSI NON VA
     })
-    console.log(await JSON.parse(await result.text()))
+    if (result.status === 404) {
+      errors.value.push(await result.text())
+      return false
+    } else if (result.status === 400) {
+      let errorResult: ErrorRegistration = await JSON.parse(await result.text())
+      errors.value = errorResult.error.issues.map((issue) => issue.message)
+      return false
+    } else if (result.status === 200) {
+      success.value = 'Password aggiornata'
+      return true
+    }
+    return false
+  } else {
+    errors.value.push('Le password non corrispondono')
+    return false
   }
 }
 </script>
@@ -31,12 +47,31 @@ async function sendResetRequest(pw: string, pw2: string) {
         <input placeholder="Conferma nuova password" class="text-sm w-[100%]" v-model="pw2" />
         <div class="border-[0.2px]"></div>
       </div>
-      <button
-        @click="() => {sendResetRequest(pw, pw2)}"
-        class="border self-center text-white bg-black rounded-full py-2 w-[6em] text-sm"
-      >
-        Conferma
-      </button>
+      <div class="flex flex-row justify-evenly">
+        <button
+          @click="
+            async () => {
+              let canClose: boolean = await sendResetRequest(pw, pw2)
+            }
+          "
+          class="border self-center text-white bg-black rounded-full py-2 w-[6em] text-sm"
+        >
+          Conferma
+        </button>
+        <button
+          @click="
+            () => {
+              resetPasswordPanelApplyOpened = false
+              $route.params.token = ''
+            }
+          "
+          class="border self-center text-white bg-black rounded-full py-2 w-[6em] text-sm"
+        >
+          Chiudi
+        </button>
+      </div>
+      <div v-for="(err, i) in errors" :key="i" class="text-sm text-red-500">{{ err }}</div>
+      <div v-if="success" class="text-sm green-red-500">{{ success }}</div>
     </div>
   </div>
 </template>

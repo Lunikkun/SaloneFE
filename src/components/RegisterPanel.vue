@@ -7,7 +7,7 @@ const pw2 = ref('')
 const nome = ref('')
 const cognome = ref('')
 const gender = ref(false)
-const errors = ref()
+const errors = ref([''])
 
 async function register(
   email: string,
@@ -32,6 +32,8 @@ async function register(
     queryResult.error = value.error
     errors.value = queryResult.error.issues.map((issue) => issue.message)
     console.log(queryResult)
+  }else{
+    errors.value.push("Le password non corrispondono");
   }
 }
 </script>

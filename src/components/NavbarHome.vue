@@ -2,7 +2,7 @@
 import LoginPanel from './LoginPanel.vue'
 import RegisterPanel from './RegisterPanel.vue'
 import ResetPanelApply from './ResetPanelApply.vue'
-import { loginPanelOpened, registerPanelOpened, resetPasswordPanelOpened, resetToken, session } from '@/stores/globals'
+import { loginPanelOpened, registerPanelOpened, resetPasswordPanelApplyOpened, resetPasswordPanelOpened, resetToken, session } from '@/stores/globals'
 import ResetPanel from './ResetPanel.vue';
 
 console.log(session.value);
@@ -60,7 +60,7 @@ async function logout() {
         Accedi
       </button>
       <button
-        v-else-if="session === undefined && resetPasswordPanelOpened"
+        v-else-if="(session === undefined) && resetPasswordPanelOpened"
         @click="()=>resetPasswordPanelOpened = !resetPasswordPanelOpened"
       >
         Recupera
@@ -69,7 +69,7 @@ async function logout() {
       <LoginPanel v-if="loginPanelOpened && !resetPasswordPanelOpened" class="z-10 top-14"></LoginPanel>
       <ResetPanel v-if="!loginPanelOpened && resetPasswordPanelOpened" class="z-10 top-14"></ResetPanel>
       <RegisterPanel v-if="registerPanelOpened " class="z-10 top-14"></RegisterPanel>
-      <ResetPanelApply v-if="resetToken !== undefined" class="z-10 top-14"></ResetPanelApply>
+      <ResetPanelApply v-if="(resetToken !== undefined) && resetPasswordPanelApplyOpened" class="z-10 top-14"></ResetPanelApply>
     </div>
   </div>
 </template>
