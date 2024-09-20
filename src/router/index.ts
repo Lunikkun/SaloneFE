@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
+import ServiziSalone from '../components/ServicesPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,8 +12,12 @@ const router = createRouter({
     {
       path: '/:token',
       name: 'homePasswordReset',
-      component: ()=>import('../components/ResetPanelApply.vue'),
-      
+      component: ()=>import('../components/ResetPanelApply.vue'),     
+    },
+    {
+      path: '/servizi',
+      name: 'services',
+      component: ServiziSalone,   
     },
   ]
 })

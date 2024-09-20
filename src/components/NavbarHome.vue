@@ -2,11 +2,17 @@
 import LoginPanel from './LoginPanel.vue'
 import RegisterPanel from './RegisterPanel.vue'
 import ResetPanelApply from './ResetPanelApply.vue'
-import { loginPanelOpened, registerPanelOpened, resetPasswordPanelApplyOpened, resetPasswordPanelOpened, resetToken, session } from '@/stores/globals'
-import ResetPanel from './ResetPanel.vue';
+import {
+  loginPanelOpened,
+  registerPanelOpened,
+  resetPasswordPanelApplyOpened,
+  resetPasswordPanelOpened,
+  resetToken,
+  session
+} from '@/stores/globals'
+import ResetPanel from './ResetPanel.vue'
 
-console.log(session.value);
-
+console.log(session.value)
 
 async function logout() {
   let result = await fetch('http://127.0.0.1:3000/logout', {
@@ -18,14 +24,13 @@ async function logout() {
   session.value = undefined
   console.log(result)
 }
-
 </script>
 
 <template>
   <div class="p-4 flex sm:justify-between justify-around items-center">
     <div class="lg:space-x-6 space-x-4 font-fanwood sm:text-xl text-lg">
-      <p class="inline">Home</p>
-      <p class="inline">Servizi</p>
+      <RouterLink to="/"><p class="inline">Home</p></RouterLink>
+      <RouterLink to="/servizi"><p class="inline">Servizi</p></RouterLink>
       <p class="inline">Chi sono</p>
     </div>
     <div class="sm:block hidden">
@@ -60,16 +65,25 @@ async function logout() {
         Accedi
       </button>
       <button
-        v-else-if="(session === undefined) && resetPasswordPanelOpened"
-        @click="()=>resetPasswordPanelOpened = !resetPasswordPanelOpened"
+        v-else-if="session === undefined && resetPasswordPanelOpened"
+        @click="() => (resetPasswordPanelOpened = !resetPasswordPanelOpened)"
       >
         Recupera
       </button>
       <button v-else @click="() => logout()">Logout</button>
-      <LoginPanel v-if="loginPanelOpened && !resetPasswordPanelOpened" class="z-10 top-14"></LoginPanel>
-      <ResetPanel v-if="!loginPanelOpened && resetPasswordPanelOpened" class="z-10 top-14"></ResetPanel>
-      <RegisterPanel v-if="registerPanelOpened " class="z-10 top-14"></RegisterPanel>
-      <ResetPanelApply v-if="(resetToken !== undefined) && resetPasswordPanelApplyOpened" class="z-10 top-14"></ResetPanelApply>
+      <LoginPanel
+        v-if="loginPanelOpened && !resetPasswordPanelOpened"
+        class="z-10 top-14"
+      ></LoginPanel>
+      <ResetPanel
+        v-if="!loginPanelOpened && resetPasswordPanelOpened"
+        class="z-10 top-14"
+      ></ResetPanel>
+      <RegisterPanel v-if="registerPanelOpened" class="z-10 top-14"></RegisterPanel>
+      <ResetPanelApply
+        v-if="resetToken !== undefined && resetPasswordPanelApplyOpened"
+        class="z-10 top-14"
+      ></ResetPanelApply>
     </div>
   </div>
 </template>

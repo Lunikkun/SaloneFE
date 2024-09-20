@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { resetPasswordPanelApplyOpened, resetToken } from '@/stores/globals'
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 const pw = ref('')
 const pw2 = ref('')
 const errors = ref([''])
@@ -58,17 +59,19 @@ async function sendResetRequest(pw: string, pw2: string): Promise<boolean> {
         >
           Conferma
         </button>
-        <button
-          @click="
-            () => {
-              resetPasswordPanelApplyOpened = false
-              $route.params.token = ''
-            }
-          "
-          class="border self-center text-white bg-black rounded-full py-2 w-[6em] text-sm"
-        >
-          Chiudi
-        </button>
+        <RouterLink to="/">
+          <button
+            @click="
+              () => {
+                resetPasswordPanelApplyOpened = false
+                $route.params.token = ''
+              }
+            "
+            class="border self-center text-white bg-black rounded-full py-2 w-[6em] text-sm"
+          >
+            Chiudi
+          </button>
+        </RouterLink>
       </div>
       <div v-for="(err, i) in errors" :key="i" class="text-sm text-red-500">{{ err }}</div>
       <div v-if="success" class="text-sm green-red-500">{{ success }}</div>
