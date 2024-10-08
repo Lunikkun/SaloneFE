@@ -6,8 +6,8 @@ const props = defineProps<{
 </script>
 <template>
   <div class="flex flex-row justify-between w-full px-4">
-    <div class="flex flex-row">
-      <img src="/long.webp?url" class="w-[15vw] h-[20vh] rounded-full" />
+    <div class="flex flex-row gap-x-8">
+      <img src="/cut.png?url" class="w-[10vw] h-[17vh] rounded-full" />
       <div class="flex flex-col">
         <div class="font-dmserif text-6xl font-bold">
           {{ props.data.nome }}
@@ -18,7 +18,7 @@ const props = defineProps<{
       </div>
     </div>
     <button
-      class="border self-center font-fanwood text-white bg-black rounded-full py-2 w-[6em] text-sm"
+      class="border self-center font-fanwood text-white bg-black rounded-full py-2 w-[12em] text-sm m-4"
     >
       PRENOTA
     </button>
