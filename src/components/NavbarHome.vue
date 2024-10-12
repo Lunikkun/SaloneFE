@@ -12,6 +12,7 @@ import {
 } from '@/stores/globals'
 import ResetPanel from './ResetPanel.vue'
 import { RouterLink } from 'vue-router'
+import router from '@/router'
 
 console.log(session.value)
 
@@ -24,6 +25,7 @@ async function logout() {
   })
   session.value = undefined
   console.log(result)
+  router.push("/")
 }
 </script>
 
