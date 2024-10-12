@@ -16,7 +16,7 @@ onMounted(async () => {
 
 <template>
   <div
-    class="bg-black text-white flex lg:flex-row xs:flex-col sm:md:flex-col items-center lg:space-x-60"
+    class="bg-black text-white flex lg:flex-row xs:flex-col sm:md:flex-col items-center justify-between lg:space-x-60"
   >
     <div v-if="isDataLoaded" class="flex items-center flex-col">
       <div class="mt-8">
