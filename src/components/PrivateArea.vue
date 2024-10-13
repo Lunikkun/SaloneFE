@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { session } from '@/stores/globals'
-import AccountInfo from './PrivateAreaPages/AccountInfoPage.vue'
 import BookReservationPage from './PrivateAreaPages/BookReservationPage.vue'
 import CheckReservationsPage from './PrivateAreaPages/CheckReservationsPage.vue'
 import ReviewPage from './PrivateAreaPages/ReviewPage.vue'
-import { markRaw, ref, shallowRef, type Component } from 'vue'
+import { markRaw, ref, type Component } from 'vue'
 import AccountInfoPage from './PrivateAreaPages/AccountInfoPage.vue'
 
 const activeComponent = ref<Component>(markRaw(AccountInfoPage));
