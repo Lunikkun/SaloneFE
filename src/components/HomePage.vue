@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { session } from '@/stores/globals';
+
 </script>
 
 <template>
 <div class="flex lg:flex-row  xs:flex-col sm:flex-col sm:md:flex-col font-hubballi lg:justify-between items-center sm:md:mt-20 xs:space-y-8">
-    <div class="flex flex-col">
+  <p>{{ session }}</p>  
+  <div class="flex flex-col">
       <div class="lg:-space-y-12 lg:ml-20 xs:-space-y-8 sm:-space-y-12">
         <div class="flex lg:text-[5rem] xs:sm:text-[5rem] md:text-[6rem] text-[3rem]">
           <p>Il Tuo</p>
@@ -14,7 +17,7 @@
           <p class="text-white pl-4">Passione</p>
         </div>
       </div>
-      <p class="flex lg:text-[4rem] text-[2rem] md:text-[3rem] lg:ml-20">Battipaglia - Salerno</p>
+      <p class="flex font-hubballi lg:text-[2rem] text-[0.5rem] md:text-[1rem] lg:ml-20">Battipaglia - Salerno</p>
     </div>
     <svg
       class=" md:w-[700px] sm:w-[300px] xs:w-[200px] md:h-[700px] sm:h-[300px] xs:h-[200px] box-content md:ml-48 sm:ml-24 xs:ml-20"

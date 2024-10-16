@@ -1,5 +1,9 @@
+import  PrivateArea  from '@/components/PrivateArea.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import ServiziSalone from '../components/ServicesPage.vue'
+import ChiSono from '@/components/ChiSono.vue'
+import HomePage from '@/components/HomePage.vue'
+import ResetPanelApply from '@/components/ResetPanelApply.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,17 +11,27 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: ()=>import('../views/viewView.vue')
+      component: HomePage
     },
     {
       path: '/:token',
       name: 'homePasswordReset',
-      component: ()=>import('../components/ResetPanelApply.vue'),     
+      component: HomePage,     
     },
     {
       path: '/servizi',
       name: 'services',
       component: ServiziSalone,   
+    },
+    {
+      path: '/chisono',
+      name: 'chisono',
+      component: ChiSono,   
+    },
+    {
+      path: '/areaprivata',
+      name: 'areaprivata',
+      component: PrivateArea,   
     },
   ]
 })

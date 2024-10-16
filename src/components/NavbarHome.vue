@@ -11,6 +11,8 @@ import {
   session
 } from '@/stores/globals'
 import ResetPanel from './ResetPanel.vue'
+import { RouterLink } from 'vue-router'
+import router from '@/router'
 
 console.log(session.value)
 
@@ -23,6 +25,7 @@ async function logout() {
   })
   session.value = undefined
   console.log(result)
+  router.push("/")
 }
 </script>
 
@@ -31,7 +34,7 @@ async function logout() {
     <div class="lg:space-x-6 space-x-4 font-fanwood sm:text-xl text-lg">
       <RouterLink to="/"><p class="inline">Home</p></RouterLink>
       <RouterLink to="/servizi"><p class="inline">Servizi</p></RouterLink>
-      <p class="inline">Chi sono</p>
+      <RouterLink to="/chisono"><p class="inline">Chi sono</p></RouterLink>
     </div>
     <div class="sm:block hidden">
       <p class="font-quando text-3xl">Carmelinda</p>
@@ -51,7 +54,9 @@ async function logout() {
       >
         Registrati
       </button>
-      <button v-else class="bg-white rounded-full lg:p-2 p-1">{{ session.userData.nome }}</button>
+      <RouterLink v-else to="/areaprivata">
+        <div class="bg-white rounded-full lg:p-2 p-1 inline">Area Privata</div>
+      </RouterLink>
       <button
         v-if="session === undefined && !resetPasswordPanelOpened"
         @click="
