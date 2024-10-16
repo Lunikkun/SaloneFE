@@ -1,8 +1,8 @@
 <script setup lang="ts">
-
+const props = defineProps<{serv:Service}>()
 </script>
 <template>
-    <div>
-
-    </div>
+  <div>
+    {{ props.serv.id }}
+  </div>
 </template>

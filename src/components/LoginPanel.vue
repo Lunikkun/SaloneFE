@@ -9,7 +9,14 @@ session.value = undefined
 
 async function login(mail: string, password: string) {
 
- c
+  let result = await fetch('http://127.0.0.1:3000/login', {
+    mode: 'cors',
+    credentials : 'include',
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: mail, password }),
+    //COSI NON VA
+  })
 
   let res = await JSON.parse(await result.text());
   if(res.session === undefined)

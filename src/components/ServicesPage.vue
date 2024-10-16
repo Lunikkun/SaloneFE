@@ -21,6 +21,6 @@ onMounted(async () => {
     class="flex lg:flex-row xs:flex-col sm:flex-col sm:md:flex-col font-hubballi lg:justify-between items-center sm:md:mt-20 xs:space-y-8"
   >
     <button>prova</button>
-    <div v-for="service in services" :key="service.id">{{ service }}</div>
+    <ServiceComponent v-for="service in services" :key="service.id" :serv="service"></ServiceComponent>
   </div>
 </template>
