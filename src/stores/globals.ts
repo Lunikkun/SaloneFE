@@ -1,6 +1,6 @@
 import { ref, watch } from "vue";
   
-export const session = ref()
+export const session = ref<Session>()
 export const loginPanelOpened = ref(false)
 export const registerPanelOpened = ref(false)
 export const resetPasswordPanelOpened = ref(false)

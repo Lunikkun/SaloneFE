@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { session } from '@/stores/globals';
+</script>
 <template>
-    <div>DDDDDDDDDDD</div>
+    <div>{{session}}</div>
+   
+    <div>infobox</div>
 </template>

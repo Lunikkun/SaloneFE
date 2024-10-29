@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { session } from '@/stores/globals';
 
 </script>
 
 <template>
 <div class="flex lg:flex-row  xs:flex-col sm:flex-col sm:md:flex-col font-hubballi lg:justify-between items-center sm:md:mt-20 xs:space-y-8">
-  <p>{{ session }}</p>  
   <div class="flex flex-col">
       <div class="lg:-space-y-12 lg:ml-20 xs:-space-y-8 sm:-space-y-12">
         <div class="flex lg:text-[5rem] xs:sm:text-[5rem] md:text-[6rem] text-[3rem]">
