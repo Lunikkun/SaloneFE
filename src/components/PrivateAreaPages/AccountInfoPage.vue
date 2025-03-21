@@ -36,7 +36,7 @@ function convertToLocalDate(isoDate: Date | undefined | null) {
 
       <div
         v-if="session?.userData?.gender === 'Male'"
-        class="self-center text-black bg-[#8094FB] rounded-full py-2 w-[6em] text-sm"
+        class="self-center text-black bg-[#8094FB] text-center rounded-full py-2 w-full text-sm"
       >
         {{ session?.userData?.gender }}
       </div>

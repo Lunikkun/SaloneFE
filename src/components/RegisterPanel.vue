@@ -18,6 +18,7 @@ async function register(
   gender: boolean
 ) {
   let queryResult: ErrorRegistration = { success: true, error: { name: '', issues: [] } }
+  alert(gender)
   if (pw === pw2) {
     let result = await fetch('http://127.0.0.1:3000/register', {
       mode: 'cors',
