@@ -1,9 +1,9 @@
-import  PrivateArea  from '@/components/PrivateArea.vue'
+import PrivateArea from '@/components/PrivateArea.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import ServiziSalone from '../components/ServicesPage.vue'
 import ChiSono from '@/components/ChiSono.vue'
 import HomePage from '@/components/HomePage.vue'
-import ResetPanelApply from '@/components/ResetPanelApply.vue'
+import { session, loginPanelOpened } from '@/stores/globals'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,29 +11,45 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomePage
+      component: HomePage,
+      meta: { requiresAuth: false }
     },
     {
       path: '/:token',
       name: 'homePasswordReset',
-      component: HomePage,     
+      component: HomePage,
+      meta: { requiresAuth: false }
     },
     {
       path: '/servizi',
       name: 'services',
-      component: ServiziSalone,   
+      component: ServiziSalone,
+      meta: { requiresAuth: false }
     },
     {
       path: '/chisono',
       name: 'chisono',
-      component: ChiSono,   
+      component: ChiSono,
+      meta: { requiresAuth: false }
     },
     {
       path: '/areaprivata',
       name: 'areaprivata',
-      component: PrivateArea,   
-    },
+      component: PrivateArea,
+      meta: { requiresAuth: true }
+    }
   ]
+})
+
+router.beforeEach((to) => {
+  // se la rotta richiede autenticazione ma non abbiamo sessione, reindirizza a home
+  const requiresAuth = to.meta?.requiresAuth === true
+  if (requiresAuth && !session.value) {
+    // apri il pannello di login (opzionale) e poi redirigi
+    loginPanelOpened.value = true
+    return { name: 'home' }
+  }
+  return true
 })
 
 export default router

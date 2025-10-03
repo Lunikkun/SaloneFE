@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { review } from '@/stores/globals'
 import { onMounted, ref } from 'vue'
 
-const review = ref()
 const fills = ref([''])
 const isDataLoaded = ref(false)
 onMounted(async () => {

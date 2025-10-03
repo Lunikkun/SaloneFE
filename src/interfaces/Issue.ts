@@ -1,4 +1,4 @@
-interface Issue {
+export interface Issue {
   validation?: string // Opzionale, perché non è presente in tutti gli oggetti
   code: string
   message: string

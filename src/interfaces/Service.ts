@@ -1,7 +1,7 @@
-interface Service {
- id :number,
- nome :string,
- durata :number,
- prezzo :string,
- descrizione : string
+export interface Service {
+  id: number
+  nome: string
+  durata: number
+  prezzo: string
+  descrizione: string
 }
