@@ -108,6 +108,7 @@ async function submitReservation() {
     })
 
     const data = await JSON.parse(await res.text())
+    console.log("risposta.   "+res)
     if (res.ok) {
       successMessage.value = 'Prenotazione inviata con successo.'
       // opzionale: reset campi
