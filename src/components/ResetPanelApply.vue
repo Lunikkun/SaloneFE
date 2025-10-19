@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ErrorRegistration } from '@/interfaces/ErrorRegistration'
 import { resetPasswordPanelApplyOpened, resetToken } from '@/stores/globals'
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'

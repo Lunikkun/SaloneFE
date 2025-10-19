@@ -1,29 +1,11 @@
 <script setup lang="ts">
-import { loginPanelOpened, resetPasswordPanelOpened, session } from '@/stores/globals'
+import { login } from '@/composables/fetch'
+import { errors, loginPanelOpened, resetPasswordPanelOpened, session } from '@/stores/globals'
 import { ref } from 'vue'
 
 let email = ref('')
 let pw = ref('')
-let errors = ref()
-//session.value = undefined
 
-async function login(mail: string, password: string) {
-  let result = await fetch('http://127.0.0.1:3000/login', {
-    mode: 'cors',
-    credentials: 'include',
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: mail, password })
-  })
-
-  let res = await JSON.parse(await result.text())
-  if (res.session === undefined) errors.value = res.error
-  else errors.value = undefined
-
-  if (res.session !== null) session.value = res
-  else session.value = undefined
-  console.log(res)
-}
 </script>
 <template>
   <div class="bg-white text-black z-999 absolute w-[250px] rounded-2xl">

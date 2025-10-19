@@ -1,93 +1,117 @@
 <script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue'
 import type { Service } from '@/interfaces/Service'
-import { servicesData } from '@/stores/globals'
-import { onMounted, ref, computed, watch } from 'vue'
+import type { StaffMember } from '@/interfaces/StaffMember'
+import { servicesData, staffData } from '@/stores/globals'
 
-function toDatetimeLocal(d: Date) {
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-
+// ---------------------------
+// Utility date
+// ---------------------------
 function toDateString(d: Date) {
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+  return d.toISOString().split('T')[0]
 }
 
 function roundMinutesTo15(d: Date) {
   const date = new Date(d)
   const mins = date.getMinutes()
   const rounded = Math.ceil(mins / 15) * 15
-  date.setSeconds(0, 0)
   if (rounded === 60) {
-    date.setHours(date.getHours() + 1)
-    date.setMinutes(0)
+    date.setHours(date.getHours() + 1, 0, 0, 0)
   } else {
-    date.setMinutes(rounded)
+    date.setMinutes(rounded, 0, 0)
   }
   return date
 }
 
-const selectedDay = ref<string>(toDateString(new Date()))
-const selectedTime = ref<string>(toDatetimeLocal(roundMinutesTo15(new Date())).slice(11, 16))
-
-// servizio selezionato e note opzionali
+// ---------------------------
+// Variabili principali
+// ---------------------------
+const selectedDay = ref(toDateString(new Date()))
+const selectedTime = ref(roundMinutesTo15(new Date()).toTimeString().slice(0, 5))
 const selectedServiceId = ref<number | null>(null)
-const notes = ref<string>('')
+const selectedStaffMemberId = ref<number | null>(null)
+const notes = ref('')
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 
 const todayDate = toDateString(new Date())
-
 const openingHour = 9
 const closingHour = 18
 
+// ---------------------------
+// Generazione slot
+// ---------------------------
 function generateTimeSlots(openH: number, closeH: number) {
   const slots: string[] = []
   for (let h = openH; h < closeH; h++) {
     for (let m = 0; m < 60; m += 15) {
-      const hh = String(h).padStart(2, '0')
-      const mm = String(m).padStart(2, '0')
-      slots.push(`${hh}:${mm}`)
+      slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
     }
   }
   return slots
 }
-
 const allSlots = generateTimeSlots(openingHour, closingHour)
 
 const availableSlots = computed(() => {
   if (selectedDay.value === todayDate) {
-    const next = roundMinutesTo15(new Date())
-    const minTime = `${String(next.getHours()).padStart(2, '0')}:${String(next.getMinutes()).padStart(2, '0')}`
+    const now = roundMinutesTo15(new Date())
+    const minTime = now.toTimeString().slice(0, 5)
     return allSlots.filter((s) => s >= minTime)
   }
   return allSlots
 })
 
-const selectedDateTime = computed(() => `${selectedDay.value}T${selectedTime.value}`)
+// ---------------------------
+// Prenotazioni già esistenti
+// ---------------------------
+const allPrenotations = ref<{ staffMember: number; data_prenotazione: string }[]>([])
 
-watch(
-  availableSlots,
-  (slots) => {
-    if (slots && slots.length > 0) {
-      if (!selectedTime.value || !slots.includes(selectedTime.value)) {
-        selectedTime.value = slots[0]
-      }
-    }
-  },
-  { immediate: true }
+onMounted(async () => {
+  if (!servicesData.value?.length) {
+    const res = await fetch('http://127.0.0.1:3000/servizi', { credentials: 'include' })
+    servicesData.value = await res.json()
+  }
+
+  if (!staffData.value?.length) {
+    const res = await fetch('http://127.0.0.1:3000/staff', { credentials: 'include' })
+    staffData.value = await res.json()
+  }
+
+  const pren = await fetch('http://127.0.0.1:3000/prenotazioni', { credentials: 'include' })
+  allPrenotations.value = await pren.json()
+})
+
+// ---------------------------
+// Slot occupati per staff/giorno selezionato
+// ---------------------------
+const bookedSlots = computed(() => {
+  if (!selectedDay.value || !selectedStaffMemberId.value) return []
+  return allPrenotations.value
+    .filter(
+      (p) =>
+        p.staffMember === selectedStaffMemberId.value &&
+        p.data_prenotazione.startsWith(selectedDay.value)
+    )
+    .map((p) => p.data_prenotazione.slice(11, 16))
+})
+
+const displaySlots = computed(() =>
+  availableSlots.value.map((slot) => ({
+    time: slot,
+    booked: bookedSlots.value.includes(slot),
+  }))
 )
 
+const selectedDateTime = computed(() => `${selectedDay.value}T${selectedTime.value}`)
+
+// ---------------------------
+// Submit prenotazione
+// ---------------------------
 async function submitReservation() {
-  errorMessage.value = null
-  successMessage.value = null
-  if (!selectedServiceId.value) {
-    errorMessage.value = 'Seleziona un servizio.'
-    return
-  }
-  if (!selectedDay.value || !selectedTime.value) {
-    errorMessage.value = 'Seleziona data e ora.'
+  errorMessage.value = successMessage.value = null
+  if (!selectedServiceId.value || !selectedStaffMemberId.value) {
+    errorMessage.value = 'Seleziona un servizio e un membro dello staff.'
     return
   }
 
@@ -96,25 +120,24 @@ async function submitReservation() {
     const payload = {
       id_servizio: selectedServiceId.value,
       data_prenotazione: selectedDateTime.value,
-      notes: notes.value || null
+      id_staff_member: selectedStaffMemberId.value,
+      notes: notes.value || null,
     }
 
     const res = await fetch('http://127.0.0.1:3000/user/prenota', {
       method: 'POST',
-      mode: 'cors',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     })
 
-    const data = await JSON.parse(await res.text())
-    console.log("risposta.   "+res)
+    const data = await res.json()
     if (res.ok) {
-      successMessage.value = 'Prenotazione inviata con successo.'
-      // opzionale: reset campi
+      successMessage.value = data?.success
       notes.value = ''
+      bookedSlots.value.push(selectedTime.value) // aggiorna localmente
     } else {
-      errorMessage.value = data?.error || data?.message || "Errore durante l'invio."
+      errorMessage.value = data?.error || 'Errore durante la prenotazione.'
     }
   } catch (e) {
     errorMessage.value = String(e)
@@ -123,48 +146,59 @@ async function submitReservation() {
   }
 }
 
-onMounted(async () => {
-  if (!servicesData.value || servicesData.value.length === 0) {
-    const result = await fetch('http://127.0.0.1:3000/servizi', {
-      mode: 'cors',
-      credentials: 'include',
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    })
-    servicesData.value = (await JSON.parse(await result.text())) as Service[]
+// ---------------------------
+// Aggiorna selezione orario se slot non valido
+// ---------------------------
+watch([availableSlots, bookedSlots], () => {
+  if (!selectedTime.value || bookedSlots.value.includes(selectedTime.value)) {
+    const nextAvailable = displaySlots.value.find((s) => !s.booked)
+    if (nextAvailable) selectedTime.value = nextAvailable.time
   }
 })
 </script>
 
 <template>
-  <div class="flex flex-row border-4 border-red-1000">
-    <div class="flex flex-row items-center gap-4">
+  <div class="flex flex-row gap-6 p-4">
+    <div class="flex flex-col gap-3">
+      <label>Data</label>
       <input type="date" v-model="selectedDay" :min="todayDate" />
+
+      <label>Orario</label>
       <select v-model="selectedTime">
-        <option v-for="slot in availableSlots" :key="slot" :value="slot">{{ slot }}</option>
-      </select>
-    </div>
-    <div class="flex flex-col">
-      <select name="serviceSelection" id="serviceSelection" v-model="selectedServiceId">
-        <option :value="null" disabled selected>Seleziona un servizio</option>
-        <option v-for="elem in servicesData" :key="elem.id" :value="elem.id">
-          {{ elem.nome }}
+        <option
+            v-for="slot in displaySlots"
+            :key="slot.time"
+            :value="slot.time"
+            :disabled="slot.booked"
+            :class="slot.booked ? 'text-gray-400 bg-gray-100' : ''"
+          >
+          {{ slot.time }} <span v-if="slot.booked">(occupato)</span>
         </option>
+</select>
+
+      <label>Servizio</label>
+      <select v-model="selectedServiceId">
+        <option :value="null" disabled>Seleziona un servizio</option>
+        <option v-for="s in servicesData" :key="s.id" :value="s.id">{{ s.nome }}</option>
       </select>
-      <textarea
-        v-model="notes"
-        placeholder="Note aggiuntive (opzionali)"
-        class="mt-2 p-2 border rounded"
-      />
+
+      <label>Staff</label>
+      <select v-model="selectedStaffMemberId">
+        <option :value="null" disabled>Seleziona un impiegato</option>
+        <option v-for="s in staffData" :key="s.id" :value="s.id">{{ s.nome }}</option>
+      </select>
+
+      <textarea v-model="notes" placeholder="Note aggiuntive (opzionali)" class="border p-2 rounded" />
+
       <button
-        class="border self-center font-fanwood text-white bg-black rounded-full py-2 w-[12em] text-sm m-4"
+        class="border font-fanwood text-white bg-black rounded-full py-2 w-[12em] text-sm mt-2"
         @click="submitReservation"
         :disabled="loading"
       >
         <span v-if="loading">Invio...</span>
         <span v-else>CONFERMA</span>
       </button>
-      Selezionato: {{ selectedDateTime }}
+
       <div class="text-red-500 font-bold" v-if="errorMessage">{{ errorMessage }}</div>
       <div class="text-green-600 font-bold" v-if="successMessage">{{ successMessage }}</div>
     </div>

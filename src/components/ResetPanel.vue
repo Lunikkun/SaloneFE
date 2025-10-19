@@ -6,7 +6,7 @@ let email = ref('')
 
 async function reset(mail: String) {
 
-  let result = await fetch('http://127.0.0.1:3000/reset-password', {
+  const result = await fetch('http://127.0.0.1:3000/reset-password', {
     mode: 'cors',
     credentials : 'include',
     method: 'POST',
