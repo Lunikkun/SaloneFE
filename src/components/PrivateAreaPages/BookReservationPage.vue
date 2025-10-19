@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import type { Service } from '@/interfaces/Service'
-import type { StaffMember } from '@/interfaces/StaffMember'
 import { servicesData, staffData } from '@/stores/globals'
 
 // ---------------------------
