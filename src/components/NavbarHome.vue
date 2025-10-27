@@ -62,7 +62,7 @@ async function logout() {
         v-if="session === undefined && !resetPasswordPanelOpened"
         @click="
           () => {
-            loginPanelOpened = false
+            loginPanelOpened = !loginPanelOpened
             registerPanelOpened = false
             console.log(session, loginPanelOpened)
           }
