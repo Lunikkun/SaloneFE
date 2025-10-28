@@ -76,7 +76,7 @@ onMounted(async () => {
     staffData.value = await res.json()
   }
 
-  const pren = await fetch('http://127.0.0.1:3000/user/prenotazioni', { credentials: 'include' })
+  const pren = await fetch('http://127.0.0.1:3000/user/prenotazioniutente', { credentials: 'include' })
   allPrenotations.value = await pren.json()
 })
 

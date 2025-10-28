@@ -14,8 +14,7 @@ import ResetPanel from './ResetPanel.vue'
 import { RouterLink } from 'vue-router'
 import router from '@/router'
 
-console.log(session.value)
-
+console.log(loginPanelOpened.value)
 async function logout() {
   let result = await fetch('http://127.0.0.1:3000/logout', {
     credentials: 'include',
