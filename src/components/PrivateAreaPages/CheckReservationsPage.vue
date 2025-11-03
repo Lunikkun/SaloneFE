@@ -11,9 +11,9 @@ onMounted(async()=>{
 })
 </script>
 <template>
-    <div class="flex flex-col border-4 w-full h-full gap-y-2">
-        <hr class="w-full border-2"/>
-        <div>LISTA PRENOTAZIONI</div>
+    <div class="flex flex-col p-4 w-full h-full gap-y-2">
+        <hr class="w-full"/>
+        <div class="font-bold text-2xl flex w-full items-center justify-center py-2">LISTA PRENOTAZIONI</div>
         <div :key="elem.id" v-for="elem in userReservation">
             <ReservationCard :reservation="elem"/>
         </div>

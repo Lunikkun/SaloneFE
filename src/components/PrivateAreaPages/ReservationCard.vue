@@ -12,9 +12,12 @@ async function deleteReservation(id_to_delete:number) {
 
 
 <template>
+    <hr class="w-full border-black"/>
     <div class="flex items-center justify-between w-full">
-        <div class="font-bold text-xl">{{ reservation.service_name }} con {{ reservation.staff_name }}</div>
-        <div class="font-bold text- xl">{{ dataora.toLocaleDateString() }} {{ dataora.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) }}</div>
+        <div>
+            <div class="font-bold text-xl">{{ reservation.service_name }} con {{ reservation.staff_name }}</div>
+            <div class="font-bold text- xl">{{ dataora.toLocaleDateString() }} {{ dataora.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) }}</div>
+        </div>
         <button 
             class="border self-center bg-red-800 text-white rounded-full py-2 w-[6em] text-sm"
             @click="deleteReservation(reservation.id)"
